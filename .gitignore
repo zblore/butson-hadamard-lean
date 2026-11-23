@@ -3,3 +3,4 @@
 sources/
 REVIEW-BRIEF*.md
 reviews/
+__pycache__/
