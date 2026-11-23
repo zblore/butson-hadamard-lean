@@ -14,8 +14,8 @@ public import ButsonHadamard
   `#guard_msgs`, so none of them can come to rest on `sorry` (or on the canary at the end of this
   file) without failing.
 * The hypothesis is satisfiable for every prime: the `n × n` Fourier matrix `(ωⁱʲ)`, with
-  `ω = exp (2πi/n)`, is a Butson-type Hadamard matrix `H(n, n)`; in particular `H(p, p)` exists
-  for every prime `p`, and the theorem gives `p ∣ p`.
+  `ω = exp (2πi/n)`, is a Butson-type Hadamard matrix `H(n, n)` for every `n ≥ 1`; in particular
+  `H(p, p)` exists for every prime `p`, and the theorem gives `p ∣ p`.
 * The theorem has content: it rules out `H(2, 3)` (Formal Conjectures proves this one by brute
   force) and `H(3, 4)`.
 * The hypothesis `2 ≤ n` is needed: the `1 × 1` matrix `[1]` is an `H(p, 1)` for every `p > 0`.

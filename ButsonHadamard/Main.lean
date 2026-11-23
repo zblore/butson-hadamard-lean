@@ -14,7 +14,7 @@ public import Mathlib.RingTheory.RootsOfUnity.Complex
 
 If a Butson-type Hadamard matrix `H(p, n)` exists with `p` prime and `n ≥ 2`, then `p ∣ n`.
 
-The proof is Butson's. The first two rows `a`, `b` are orthogonal, so `∑ⱼ aⱼ · conj bⱼ = 0`, and
+The proof is the standard vanishing-sum argument for this theorem. The first two rows `a`, `b` are orthogonal, so `∑ⱼ aⱼ · conj bⱼ = 0`, and
 each term is a `p`-th root of unity, hence a power `ζ ^ kⱼ` of `ζ = exp (2πi/p)` with `kⱼ < p`
 (`exists_pow_eq_of_pow_eq_one`). Counting how often each power occurs, `cₖ = #{j | kⱼ = k}`, gives
 `∑_{k<p} cₖ ζᵏ = 0`. The polynomial `P = ∑_{k<p} cₖ Xᵏ ∈ ℚ[X]` therefore vanishes at `ζ`, so the

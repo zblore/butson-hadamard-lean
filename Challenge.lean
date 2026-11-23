@@ -1,7 +1,24 @@
 /-
-Copyright (c) 2026 Zayn Blore. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Zayn Blore
+Copyright 2026 The Formal Conjectures Authors.
+Copyright (c) 2026 Zayn Blore.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Modified by Zayn Blore, 2026: the definition `IsButsonHadamard` and the statement
+`butson_prime_divisibility` are extracted from Formal Conjectures,
+`FormalConjectures/Wikipedia/ButsonHadamardMatrix.lean` at commit `2207c54d`; the import of
+`FormalConjecturesUtil` is replaced by two Mathlib imports, the module docstring is new, and the
+`category` and `AMS` attributes are removed.
 -/
 module
 

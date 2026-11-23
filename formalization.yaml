@@ -5,13 +5,12 @@ project:
   name: "Butson's prime divisibility theorem"
   description: >-
     A machine-checked proof of Butson's theorem (1962): if a Butson-type Hadamard matrix H(p, n)
-    exists, with p prime and n at least 2, then p divides n. A Butson-type Hadamard matrix H(k, n)
-    is an n by n complex matrix whose entries are k-th roots of unity and whose rows are mutually
-    orthogonal, M M* = n I; H(2, n) are the real Hadamard matrices, and complex Hadamard matrices
-    of this kind are the building blocks of mutually unbiased bases in quantum information. The
-    statement and definition are those of Formal Conjectures (ButsonHadamardMatrix.lean), copied
-    verbatim. The proof is Butson's: two orthogonal rows give a vanishing sum of n p-th roots of
-    unity; counting how often each power of exp(2 pi i / p) occurs gives a rational polynomial of
+    exists, with p prime and n at least 2, then p divides n. A Butson-type Hadamard matrix H(k, n),
+    for k > 0, is an n by n complex matrix whose entries are k-th roots of unity and whose rows are
+    mutually orthogonal, M M* = n I; H(2, n) are the real Hadamard matrices. The statement and
+    definition are those of Formal Conjectures (ButsonHadamardMatrix.lean), copied verbatim. The
+    proof is the standard vanishing-sum argument: two orthogonal rows give a vanishing sum of n
+    p-th roots of unity; counting how often each power of exp(2 pi i / p) occurs gives a rational polynomial of
     degree below p vanishing at that root, so the p-th cyclotomic polynomial 1 + X + ... + X^(p-1)
     divides it, every power occurs equally often, and p divides n.
   authors:
@@ -24,7 +23,7 @@ repository:
   role: "substantive-development"
 
 classification:
-  arxiv: ["math.CO", "math.NT", "quant-ph"]
+  arxiv: ["math.CO", "math.NT"]
   msc2020: ["05B20", "15B34", "11R18"]
 
 sources:
@@ -49,6 +48,19 @@ related_formalizations:
       without the category and AMS attributes, which Formal Conjectures defines;
       scripts/check-fc-match.py checks this against Formal Conjectures at that commit and pins the
       file by SHA-256. The theorem keeps Formal Conjectures' name.
+  - id: "https://github.com/leanprover-community/mathlib4/blob/5e0c4e5239cb0a2d86d68a884bf52cfd963fce22/Mathlib/LinearAlgebra/Matrix/HadamardMatrix.lean"
+    relationship: "other"
+    note: >-
+      Mathlib's Hadamard matrices over a star ring (Matrix.IsHadamard: unitary entries, orthogonal
+      rows), which over the complex numbers include complex Hadamard matrices, with
+      IsHadamard.four_dvd_card (an integer Hadamard matrix of order greater than two has order
+      divisible by four). It has no notion of entries of a fixed root-of-unity order and does not
+      prove Butson's theorem. Not used by this proof.
+  - id: "https://github.com/tysunseven/ScalarVectorialBent/blob/8e38cf7d8bf1000499c78fb3af0478992a7fb370/ScalarVectorialBent/Butson.lean"
+    relationship: "independent"
+    note: >-
+      Defines its own IsButsonHadamard and relates Butson matrices to bent functions; does not
+      prove the divisibility theorem. Read, not compiled.
 
 status:
   scope: >-
@@ -70,33 +82,48 @@ automation:
       models: ["Claude Opus 5.5"]
       framework: "Claude Code"
   notes: >-
-    I drafted the Lean with Claude Code, on 23 November 2026, following Butson's argument. I
-    directed the work and checked the result.
+    I drafted the Lean with Claude Code, on 23 November 2026, following the standard
+    vanishing-sum argument. I directed the work and checked the result.
 
 fidelity:
   divergences: >-
-    None in the statement or the definition, which are Formal Conjectures' text (checked by
-    scripts/check-fc-match.py). The only difference is that the category and AMS attributes are
-    left out. The primitive root used in the proof is Complex.exp (2 * pi * I / p), and the
+    None in the text of the statement or the definition, which are Formal Conjectures' (checked by
+    scripts/check-fc-match.py); the category and AMS attributes are left out. The same text is
+    elaborated here with Lean v4.35.0-rc3, Mathlib 5e0c4e5 and two Mathlib imports, where Formal
+    Conjectures uses Lean v4.33.1, Mathlib 0df444a3 and FormalConjecturesUtil; the statement uses
+    no Formal Conjectures notation or instance. The primitive root used in the proof is Complex.exp (2 * pi * I / p), and the
     cyclotomic polynomial is Mathlib's, with its irreducibility over the rationals
     (cyclotomic_eq_minpoly_rat).
 
 review:
-  status: "self-assessed"
+  status: "agent-reviewed"
+  reviewers:
+    - "OpenAI gpt-6-astra (AI-model review commissioned by the author, 23 November 2026)"
+    - "Claude Fable 5.2 (AI-model review commissioned by the author, 23 November 2026)"
   notes: >-
     The proof development has no sorry, admit or native_decide; the sorry in Challenge.lean is
     Comparator's placeholder, and audit/Control.lean has one deliberate sorry, placed last, to
     show that the axiom audit catches it. audit/Axioms.lean enforces with #guard_msgs that the
     theorem and its key lemma use only propext, Classical.choice and Quot.sound.
     audit/Control.lean states its controls as named theorems with checked axioms: the Fourier
-    matrix is an H(n, n) for every n, so the hypothesis is satisfiable for every prime; the
-    theorem rules out H(2, 3) and H(3, 4); and the 1 by 1 matrix [1] is an H(p, 1), so the
-    hypothesis n at least 2 is needed. scripts/check-fc-match.py --self-test checks the
-    Challenge and the definition against Formal Conjectures and confirms that 6 altered inputs
-    fail. Lake's comparator was run locally on Windows, unsandboxed (--inadvisably-no-sandbox,
-    with explicit paths to the nanoda and con-ron binaries), on 23 November 2026: the statements
-    match and con-ron, nanoda and Lean's kernel accept the proof. An unsandboxed run is not the
-    trusted check; the sandboxed Linux run happens in CI after a push.
+    matrix is an H(n, n) for every n at least 1, so the hypothesis is satisfiable for every
+    prime; the theorem rules out H(2, 3) and H(3, 4); and the 1 by 1 matrix [1] is an H(p, 1) for
+    every p > 0, so the hypothesis n at least 2 is needed. scripts/check-fc-match.py compares
+    Challenge.lean and ButsonHadamard/Defs.lean, as whole files, with text built from Formal
+    Conjectures' source at the pinned commit; its self-test confirms that 8 altered inputs fail.
+    Two AI models reviewed commit 397bad9 independently on 23 November 2026; both found the
+    statement faithful and the proof correct, and one rebuilt it and reran the audits and the
+    check script. Their findings were fixed afterwards: the check script compared only part of
+    the Challenge and could be fooled by a command hidden after the module docstring, and checked
+    the definition file by substring; Formal Conjectures' copyright notice was restored on the
+    copied text; Mathlib's Hadamard matrices and another Lean definition of Butson matrices were
+    added to the related work; the quant-ph classification and a loose remark about mutually
+    unbiased bases were removed; and wording. Those fixes were not reviewed again. The reviews
+    are not published. Lake's comparator was run locally on Windows, unsandboxed
+    (--inadvisably-no-sandbox, with explicit paths to the nanoda and con-ron binaries), on 23
+    November 2026: the statements match and con-ron, nanoda and Lean's kernel accept the proof.
+    An unsandboxed run is not the trusted check; the sandboxed Linux run happens in CI after a
+    push.
 
 alignment:
   namespace: "ButsonHadamardMatrix"
