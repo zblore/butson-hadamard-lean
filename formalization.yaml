@@ -1,0 +1,110 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+version: "v0.4"
+
+project:
+  name: "Butson's prime divisibility theorem"
+  description: >-
+    A machine-checked proof of Butson's theorem (1962): if a Butson-type Hadamard matrix H(p, n)
+    exists, with p prime and n at least 2, then p divides n. A Butson-type Hadamard matrix H(k, n)
+    is an n by n complex matrix whose entries are k-th roots of unity and whose rows are mutually
+    orthogonal, M M* = n I; H(2, n) are the real Hadamard matrices, and complex Hadamard matrices
+    of this kind are the building blocks of mutually unbiased bases in quantum information. The
+    statement and definition are those of Formal Conjectures (ButsonHadamardMatrix.lean), copied
+    verbatim. The proof is Butson's: two orthogonal rows give a vanishing sum of n p-th roots of
+    unity; counting how often each power of exp(2 pi i / p) occurs gives a rational polynomial of
+    degree below p vanishing at that root, so the p-th cyclotomic polynomial 1 + X + ... + X^(p-1)
+    divides it, every power occurs equally often, and p divides n.
+  authors:
+    - "Zayn Blore"
+  license: "Apache-2.0"
+  responsible_maintainers:
+    - "Zayn Blore"
+
+repository:
+  role: "substantive-development"
+
+classification:
+  arxiv: ["math.CO", "math.NT", "quant-ph"]
+  msc2020: ["05B20", "15B34", "11R18"]
+
+sources:
+  - title: "Generalized Hadamard matrices"
+    authors:
+      - "A. T. Butson"
+    id: "https://doi.org/10.1090/S0002-9939-1962-0142557-0"
+    type: "paper"
+    location: "Proc. Amer. Math. Soc. 13 (1962), no. 6, 894-898."
+    relationship: "formalizes"
+    note: >-
+      Butson's theorem that H(p, n) with p prime forces p to divide n, by the vanishing-sum
+      argument formalised here. Formal Conjectures cites it as [Bu62] for the statement.
+    author_endorsement: "n/a"
+
+related_formalizations:
+  - id: "https://github.com/google-deepmind/formal-conjectures/blob/2207c54d0dbe960de591d280f997b195bf3f6e28/FormalConjectures/Wikipedia/ButsonHadamardMatrix.lean"
+    relationship: "builds-on"
+    note: >-
+      Supplies the statement butson_prime_divisibility (research solved, unproved there) and the
+      definition IsButsonHadamard. Challenge.lean and ButsonHadamard/Defs.lean copy them verbatim,
+      without the category and AMS attributes, which Formal Conjectures defines;
+      scripts/check-fc-match.py checks this against Formal Conjectures at that commit and pins the
+      file by SHA-256. The theorem keeps Formal Conjectures' name.
+
+status:
+  scope: >-
+    Exactly Formal Conjectures' statement: for every prime p and every n at least 2, if a
+    Butson-type Hadamard matrix H(p, n) exists then p divides n. Not covered: Butson's further
+    results (existence constructions), the de Launey and Winterhof non-existence results such as
+    the absence of H(3, 15) (the statement not_forall_odd_prime_mul_exists in the same Formal
+    Conjectures file), and non-prime k.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms:
+    - "propext"
+    - "Classical.choice"
+    - "Quot.sound"
+
+automation:
+  methods:
+    - method: "agent"
+      models: ["Claude Opus 5.5"]
+      framework: "Claude Code"
+  notes: >-
+    I drafted the Lean with Claude Code, on 23 November 2026, following Butson's argument. I
+    directed the work and checked the result.
+
+fidelity:
+  divergences: >-
+    None in the statement or the definition, which are Formal Conjectures' text (checked by
+    scripts/check-fc-match.py). The only difference is that the category and AMS attributes are
+    left out. The primitive root used in the proof is Complex.exp (2 * pi * I / p), and the
+    cyclotomic polynomial is Mathlib's, with its irreducibility over the rationals
+    (cyclotomic_eq_minpoly_rat).
+
+review:
+  status: "self-assessed"
+  notes: >-
+    The proof development has no sorry, admit or native_decide; the sorry in Challenge.lean is
+    Comparator's placeholder, and audit/Control.lean has one deliberate sorry, placed last, to
+    show that the axiom audit catches it. audit/Axioms.lean enforces with #guard_msgs that the
+    theorem and its key lemma use only propext, Classical.choice and Quot.sound.
+    audit/Control.lean states its controls as named theorems with checked axioms: the Fourier
+    matrix is an H(n, n) for every n, so the hypothesis is satisfiable for every prime; the
+    theorem rules out H(2, 3) and H(3, 4); and the 1 by 1 matrix [1] is an H(p, 1), so the
+    hypothesis n at least 2 is needed. scripts/check-fc-match.py --self-test checks the
+    Challenge and the definition against Formal Conjectures and confirms that 6 altered inputs
+    fail. Lake's comparator was run locally on Windows, unsandboxed (--inadvisably-no-sandbox,
+    with explicit paths to the nanoda and con-ron binaries), on 23 November 2026: the statements
+    match and con-ron, nanoda and Lean's kernel accept the proof. An unsandboxed run is not the
+    trusted check; the sandboxed Linux run happens in CI after a push.
+
+alignment:
+  namespace: "ButsonHadamardMatrix"
+  statements:
+    - source: "Butson (1962): if a Butson-type Hadamard matrix H(p, n) exists with p prime and n at least 2, then p divides n"
+      lean: "ButsonHadamardMatrix.butson_prime_divisibility"
+      module: "Solution"
+      status: "proved"
+
+acknowledgements: >-
+  Thanks to the authors of Lean 4, Mathlib and Formal Conjectures.
